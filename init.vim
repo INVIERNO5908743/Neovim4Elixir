@@ -1,4 +1,4 @@
-"" Neovim for Elixir
+" Neovim for Elixir
 " Josh Adams
 " http://www.smoothterminal.com/articles/neovim-for-elixir
 "
@@ -18,6 +18,19 @@ Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 
 " uncomment below to disable mouse/cursor in nvim
 " set mouse=""
+" see help: clipboard
+" set clipboard=unnamed
+
+" croshclip
+" https://github.com/acornejo/croshclip
+" cat /etc/profile.d/croshclip.sh
+" nc -z localhost 30001 || croshclip -serve > /tmp/croshclip.log 2>&1 &
+  nnoremap "*p :r !croshclip -paste<CR>
+  vnoremap "*y :w !croshclip -copy<CR><CR>
+
+  nnoremap "+p :r !croshclip -paste<CR>
+  vnoremap "+y :w !croshclip -copy<CR><CR>
+
 
 " Sane tabs
 " - Two spaces wide
@@ -69,48 +82,47 @@ Plug 'tomasr/molokai'
 " Execute code checks, find mistakes, in the background
   Plug 'neomake/neomake'
 
-  " Run Neomake when I save any buffer
-    augroup localneomake
-      autocmd! BufWritePost,BufEnter * Neomake
-    augroup END
+" Run Neomake when I save any buffer
+  augroup localneomake
+    autocmd! BufWritePost,BufEnter * Neomake
+  augroup END
 
-    let g:neomake_open_list = 2
+  let g:neomake_open_list = 2
 
-  " Don't tell me to use smartquotes in markdown ok?
-    let g:neomake_markdown_enabled_makers = []
+" Don't tell me to use smartquotes in markdown ok?
+  let g:neomake_markdown_enabled_makers = []
 
-  " Configure a nice credo setup, courtesy https://github.com/neomake/neomake/pull/300
-    let g:neomake_elixir_enabled_makers = ['mix', 'mycredo']
-    function! NeomakeCredoErrorType(entry)
-      if a:entry.type ==# 'F'      " Refactoring opportunities
-        let l:type = 'W'
-      elseif a:entry.type ==# 'D'  " Software design suggestions
-        let l:type = 'I'
-      elseif a:entry.type ==# 'W'  " Warnings
-        let l:type = 'W'
-      elseif a:entry.type ==# 'R'  " Readability suggestions
-         let l:type = 'I'
-      elseif a:entry.type ==# 'C'  " Convention violation
-        let l:type = 'W'
-      else
-        let l:type = 'M'           " Everything else is a message
-      endif
-        let a:entry.type = l:type
-    endfunction
+" Configure a nice credo setup, courtesy https://github.com/neomake/neomake/pull/300
+  let g:neomake_elixir_enabled_makers = ['mix', 'mycredo']
+  function! NeomakeCredoErrorType(entry)
+    if a:entry.type ==# 'F'      " Refactoring opportunities
+      let l:type = 'W'
+    elseif a:entry.type ==# 'D'  " Software design suggestions
+      let l:type = 'I'
+    elseif a:entry.type ==# 'W'  " Warnings
+      let l:type = 'W'
+    elseif a:entry.type ==# 'R'  " Readability suggestions
+       let l:type = 'I'
+    elseif a:entry.type ==# 'C'  " Convention violation
+      let l:type = 'W'
+    else
+      let l:type = 'M'           " Everything else is a message
+    endif
+      let a:entry.type = l:type
+  endfunction
 
-
-    let g:neomake_elixir_mycredo_maker = {
-          \ 'exe': 'mix',
-          \ 'args': ['credo', 'list', '%:p', '--format=oneline'],
-          \ 'errorformat': '[%t] %. %f:%l:%c %m,[%t] %. %f:%l %m',
-          \ 'postprocess': function('NeomakeCredoErrorType')
-          \ }
-
+  let g:neomake_elixir_mycredo_maker = {
+        \ 'exe': 'mix',
+        \ 'args': ['credo', 'list', '%:p', '--format=oneline'],
+        \ 'errorformat': '[%t] %. %f:%l:%c %m,[%t] %. %f:%l %m',
+        \ 'postprocess': function('NeomakeCredoErrorType')
+        \ }
 
 Plug 'c-brenn/phoenix.vim'
 Plug 'tpope/vim-projectionist' " required for some navigation features
 Plug 'slashmili/alchemist.vim'
 Plug 'powerman/vim-plugin-AnsiEsc'
+Plug 'kana/vim-fakeclip'
 
 
 call plug#end()
